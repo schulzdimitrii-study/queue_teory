@@ -28,8 +28,9 @@ def main():
             lamb = float(input('Digite a taxa média de chegada (lambda): '))
             mu = float(input('Digite a taxa média de serviço (mu): '))
             k = float(input('Digite o valor de K (capacidade máxima do sistema): '))
-            queue = MMsK(lamb=lamb, mu=mu, k=k, s=2, n=5)
-            queue.calculate_metrics()
+            queue = MMsK(lamb=lamb, mu=mu, k=k, servers=2, customers=5)
+            res = queue.calculate_metrics()
+            print(res)
 
 if __name__ == "__main__":
     main()
