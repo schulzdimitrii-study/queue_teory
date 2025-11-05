@@ -1,5 +1,3 @@
-import os
-
 from models.mm1 import MM1
 from models.mm1k import MM1K
 from models.mmsk import MMsK
@@ -22,13 +20,15 @@ def main():
             pass
         case '3':
             queue = MM1K(lamb=5, mu=7, k=5)
-            queue.calculate_metrics()
+            res = queue.calculate_metrics()
+            print(res)
         case '4':
-            os.system('clear')
             lamb = float(input('Digite a taxa média de chegada (lambda): '))
             mu = float(input('Digite a taxa média de serviço (mu): '))
             k = float(input('Digite o valor de K (capacidade máxima do sistema): '))
-            queue = MMsK(lamb=lamb, mu=mu, k=k, servers=2, customers=5)
+            time = float(input('Digite o tempo t para calcular P(W > t) e P(Wq > t): '))
+
+            queue = MMsK(lamb=lamb, mu=mu, k=k, t=time, servers=2, n=5)
             res = queue.calculate_metrics()
             print(res)
 
