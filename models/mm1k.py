@@ -5,8 +5,10 @@ from models.base_queue import BaseQueueModel
 
 
 class MM1K(BaseQueueModel):
-    def __init__(self, lamb: float, mu: float, k: float) -> None:
-        super().__init__(lamb, mu, k)
+    def __init__(
+        self, lamb: float, mu: float, capacity: float, servers: int = 1
+    ) -> None:
+        super().__init__(lamb, mu, capacity, servers)
         self.rho = lamb / mu
 
     def calculate_metrics(self) -> Dict:
@@ -27,23 +29,27 @@ class MM1K(BaseQueueModel):
             "pw": round(pw, 2),
             "pwq": round(pwq, 2),
             "Wq": round(wq),
-            "W": round(w)
+            "W": round(w),
         }
 
     def __calculate_probability_system_empty(self) -> float:
         if self.rho == 1:
-            return 1 / (self.k + 1)
+            return 1 / (self.capacity + 1)
 
-        return (1 - self.rho) / (1 - self.rho**(self.k + 1))
+        return (1 - self.rho) / (1 - self.rho ** (self.capacity + 1))
 
     def __calculate_avg_customers_queue(self, l: float, p0: float) -> float:
         return l - (1 - p0)
 
     def __calculate_avg_customers_system(self) -> float:
-        return self.rho / (1 - self.rho) - ((self.k + 1) * self.rho**(self.k + 1) / (1 - self.rho**(self.k + 1)))
+        return self.rho / (1 - self.rho) - (
+            (self.capacity + 1)
+            * self.rho ** (self.capacity + 1)
+            / (1 - self.rho ** (self.capacity + 1))
+        )
 
     def __calculate_probability_n_customers_system(self, n: int) -> float:
-        return (1 - self.rho) * self.rho**n / (1 - self.rho**(self.k + 1))
+        return (1 - self.rho) * self.rho**n / (1 - self.rho ** (self.capacity + 1))
 
     def __calculate_avg_time_queue(self, lq: float, pn: float) -> float:
         return lq / (self.lamb * (1 - pn))
