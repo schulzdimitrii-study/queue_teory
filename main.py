@@ -1,3 +1,4 @@
+from models.mm1 import MM1
 from models.mm1k import MM1K
 from models.mmsk import MMsK
 from models.mmsn import MMsN
@@ -14,8 +15,14 @@ def main():
 
     match choice:
         case "1":
-            queue = MM1K(lamb=5, mu=7, capacity=1)
-            queue.calculate_metrics()
+            lamb = float(input("Digite a taxa média de chegada (lambda): "))
+            mu = float(input("Digite a taxa média de serviço (mu): "))
+            n = int(input("Digite o número de clientes no sistema (n): "))
+            r = int(input("Digite o número de clientes para Pn (r): "))
+            t = float(input("Digite o tempo t para calcular P(W > t) e P(Wq > t): "))
+            queue = MM1(lamb=lamb, mu=mu, k=1, s=1, n=n, r=r, t=t)
+            res = queue.calculate_metrics()
+            print(res)
         case "2":
             pass
         case "3":
