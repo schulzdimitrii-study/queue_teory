@@ -37,8 +37,7 @@ def main():
             mu = float(input("Digite a taxa média de serviço (mu): "))
             n = int(input("Digite o número de clientes no sistema (n): "))
             k = int(input("Digite o valor de K (capacidade máxima do sistema): "))
-            t = float(input("Digite o tempo t para calcular P(W > t) e P(Wq > t): "))
-            queue = MM1K(lamb=lamb, mu=mu, k=k, s=1, n=n, t=t)
+            queue = MM1K(lamb=lamb, mu=mu, k=k, s=1, n=n)
             res = queue.calculate_metrics()
             print(res)
         case "4":
