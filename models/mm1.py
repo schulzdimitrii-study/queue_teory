@@ -13,6 +13,11 @@ class MM1(BaseQueueModel):
         self.r = r # Número de clientes para Pn
         self.t = t # Tempo t para calcular P(W > t) e P(Wq > t)
 
+        if lamb < 0 or mu <= 0 or s != 1:
+            raise ValueError("Parâmetros inválidos: requer λ ≥ 0, μ > 0 e s = 1.")
+        if lamb >= mu:
+            raise ValueError("Sistema instável: ρ deve ser menor que 1.")
+
     def calculate_metrics(self) -> Dict:
         p0 = self.__calculate_probability_system_empty()
         pn = self.__calculate_probability_n_customers_system()
@@ -38,8 +43,6 @@ class MM1(BaseQueueModel):
         }
     
     def __calculate_probability_system_empty(self) -> float:
-        if self.rho >= 1:
-            raise ValueError("Sistema instável: ρ deve ser menor que 1.")
         return 1 - self.rho
     
     def __calculate_probability_n_customers_system(self) -> float:
