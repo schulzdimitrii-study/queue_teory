@@ -5,8 +5,8 @@ from models.base_queue import BaseQueueModel
 
 class MM1(BaseQueueModel):
     def __init__(
-            self, lamb: float, mu: float, k: int , s: int, n: int, r: int, t: float
-        ) -> None:
+        self, lamb: float, mu: float, k: int , s: int, n: int, r: int, t: float
+    ) -> None:
         super().__init__(lamb, mu, k, s)
         self.rho = lamb / mu  # Taxa de utilização do sistema
         self.n = n # Número de clientes no sistema para Pn
@@ -32,16 +32,16 @@ class MM1(BaseQueueModel):
         pwq = self.__calculate_waiting_time_queue_exceeding_t()
 
         return {
-            "Rho": round(self.rho, 2),
-            "P0": round(p0, 2),
-            "Pn": round(pn, 2),
-            "Pr": round(pr, 2),
-            "L": round(l, 2),
-            "Lq": round(lq, 2),
-            "W": round(w, 2),
-            "Wq": round(wq, 2),
-            "pw": round(pw, 2),
-            "pwq": round(pwq, 2)
+            "Rho": round(self.rho, 4),
+            "P0": round(p0, 4),
+            "Pn": round(pn, 4),
+            "Pr": round(pr, 4),
+            "L": round(l, 4),
+            "Lq": round(lq, 4),
+            "W": round(w, 4),
+            "Wq": round(wq, 4),
+            "pw": round(pw, 4),
+            "pwq": round(pwq, 4)
         }
     
     def __calculate_probability_system_empty(self) -> float:
