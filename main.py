@@ -43,10 +43,10 @@ def main():
         case "4":
             lamb = float(input("Digite a taxa média de chegada (lambda): "))
             mu = float(input("Digite a taxa média de serviço (mu): "))
-            k = float(input("Digite o valor de K (capacidade máxima do sistema): "))
-            time = float(input("Digite o tempo t para calcular P(W > t) e P(Wq > t): "))
-
-            queue = MMsK(lamb=lamb, mu=mu, k=k, t=time, servers=2, n=5)
+            s = int(input("Digite o número de servidores (s): "))
+            n = int(input("Digite o número de clientes no sistema (n): "))
+            k = int(input("Digite o valor de K (capacidade máxima do sistema): "))
+            queue = MMsK(lamb=lamb, mu=mu, k=k, s=s, n=n)
             res = queue.calculate_metrics()
             print(res)
         case "5":

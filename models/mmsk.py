@@ -3,83 +3,71 @@ from typing import Dict
 
 from models.base_queue import BaseQueueModel
 
-
 class MMsK(BaseQueueModel):
     def __init__(
-        self, lamb: float, mu: float, k: float, t: int, servers: int, n: int = 0
+        self, lamb: float, mu: float, k: int, s: int, n: int
     ) -> None:
-        super().__init__(lamb, mu, k, servers)
-        self.rho = lamb / mu
-        self.s = servers
+        super().__init__(lamb, mu, k, s)
+        self.a = lamb / mu
+        self.rho = self.lamb / (self.s * self.mu)
+        self.k = k
         self.n = n
-        self.time = t
+
+        if s <= 1:
+            raise ValueError("Número de servidores deve ser maior que 1.")
+        if n < 0 or k < 0:
+            raise ValueError("n e k devem ser valores não negativos.")
 
     def calculate_metrics(self) -> Dict[str, float]:
         p0 = self.__calculate_probability_system_empty()
-        l = self.__calculate_avg_customers_system()
-        lq = self.__calculate_avg_customers_queue(l, p0)
-        pn = self.__calculate_probability_n_customers_system(self.n)
-        wq = self.__calculate_avg_time_queue(lq, pn)
-        w = self.__calculate_avg_time_system(l, pn)
-        pw = self.__calculate_waiting_time_exceeding_t(
-            self.p0, self.lamb, self.mu, self.s
-        )
-        pwq = self.__calculate_waiting_time_queue_exceeding_t(self.mu, 3)
+        pn = self.__calculate_probability_n_customers_system(p0, self.n)
+        pk = self.__calculate_probability_k_customers_system(p0)
+        lq = self.__calculate_avg_customers_queue(p0)
+        l = self.__calculate_avg_customers_system(p0, lq)
+        wq = self.__calculate_avg_time_queue(lq, pk)
+        w = self.__calculate_avg_time_system(l, pk)
 
         return {
-            "P0": round(p0, 2),
-            "L": round(l, 2),
-            "Lq": round(lq, 2),
-            "Pn": round(pn, 2),
-            "pw": round(pw, 2),
-            "pwq": round(pwq, 2),
-            "Wq": round(wq),
-            "W": round(w),
+            "P0": round(p0, 4),
+            "Pn": round(pn, 4),
+            "Lq": round(lq, 4),
+            "L": round(l, 4),
+            "Wq": round(wq, 4),
+            "W": round(w, 4)
         }
 
     def __calculate_probability_system_empty(self) -> float:
-        return (1 - self.rho) / (1 - self.rho ** (self.capacity + 1))
-
-    def __calculate_avg_customers_system(self) -> float:
-        return self.rho / (1 - self.rho) - (
-            (self.capacity + 1)
-            * self.rho ** (self.capacity + 1)
-            / (1 - self.rho ** (self.capacity + 1))
-        )
-
-    def __calculate_avg_customers_queue(self, l: float, p0: float) -> float:
-        return l - (1 - p0)
-
-    def __calculate_probability_n_customers_system(self, n: int) -> float:
+        sum_part1 = sum(self.a**n / factorial(n) for n in range(self.s + 1))
+        middle_part = (self.a**self.s) / (factorial(self.s))
+        sum_part2 = sum(self.rho**(n - self.s) for n in range(self.s + 1, self.k + 1))
+        return 1 / (sum_part1 + middle_part * sum_part2)
+    
+    def __calculate_probability_n_customers_system(self, p0: float, n: int) -> float:
         if n <= self.s:
-            pn = (
-                self.rho**n / factorial(n)
-            ) * self.__calculate_probability_system_empty()
+            return (self.a**n / factorial(n)) * p0
+        elif n <= self.k:
+            return (self.a**n) / (factorial(self.s) * self.s**(n - self.s)) * p0
         else:
-            pn = (1 - self.rho) * self.rho**n / (1 - self.rho ** (self.capacity + 1))
-        return pn
+            return 0.0
+        
+    def __calculate_probability_k_customers_system(self, p0: float) -> float:
+        if self.k <= self.s:
+            return (self.a**self.k / factorial(self.k)) * p0
+        else:
+            return (self.a**self.k) / (factorial(self.s) * self.s**(self.k - self.s)) * p0
+        
+    def __calculate_avg_customers_queue(self, p0: float) -> float:
+        first_part = (p0*(self.a**self.s) * self.rho) / (factorial(self.s) * (1 - self.rho)**2)
+        second_part = (1 - self.rho**(self.k - self.s) - (1 - self.rho)*(self.k - self.s)*self.rho**(self.k - self.s))
+        return first_part * second_part
 
-    def __calculate_avg_time_queue(self, lq: float, pn: float) -> float:
-        return lq / (self.lamb * (1 - pn))
+    def __calculate_avg_customers_system(self, p0: float, lq: float) -> float:
+        first_part = sum(n * self.__calculate_probability_n_customers_system(p0, n) for n in range(self.s)) + lq
+        second_part = self.s * (1 - sum(self.__calculate_probability_n_customers_system(p0, n) for n in range(self.s)))
+        return first_part + second_part
 
-    def __calculate_avg_time_system(self, l: float, pn: float) -> float:
-        return l / (self.lamb * (1 - pn))
+    def __calculate_avg_time_queue(self, lq: float, pk: float) -> float:
+        return lq / (self.lamb * (1 - pk))
 
-    def __calculate_waiting_time_exceeding_t(
-        self, p0: float, lamb: float, mu: float, s: int
-    ) -> float:
-        numerator = (
-            p0 * (lamb / mu) ** s * (1 - exp(-mu * self.time * (s - 1 - lamb / mu)))
-        )
-        denominator = factorial(s) * (1 - self.rho) * (s - 1 - lamb / mu)
-
-        return exp(-mu * self.time) * (1 + numerator / denominator)
-
-    def __calculate_waiting_time_queue_exceeding_t(self, mu: float, s: int) -> float:
-        probability_wq_equal_zero = sum(
-            self.__calculate_probability_n_customers_system(n) for n in range(s)
-        )
-
-        return (1 - probability_wq_equal_zero) * exp(
-            -s * mu * (1 - self.rho) * self.time
-        )
+    def __calculate_avg_time_system(self, l: float, pk: float) -> float:
+        return l / (self.lamb * (1 - pk))
