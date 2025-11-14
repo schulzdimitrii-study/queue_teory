@@ -15,6 +15,8 @@ class MM1(BaseQueueModel):
 
         if lamb < 0 or mu <= 0 or s != 1:
             raise ValueError("Parâmetros inválidos: requer λ ≥ 0, μ > 0 e s = 1.")
+        if n < 0 or r < 0 or t < 0:
+            raise ValueError("Parâmetros inválidos: n, r e t devem ser não negativos.")
         if lamb >= mu:
             raise ValueError("Sistema instável: ρ deve ser menor que 1.")
 
