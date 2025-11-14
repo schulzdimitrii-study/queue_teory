@@ -1,7 +1,10 @@
 from models.mm1 import MM1
+from models.mms import MMs
 from models.mm1k import MM1K
 from models.mmsk import MMsK
 from models.mmsn import MMsN
+
+from math import factorial
 
 
 def main():
@@ -24,7 +27,15 @@ def main():
             res = queue.calculate_metrics()
             print(res)
         case "2":
-            pass
+            lamb = float(input("Digite a taxa média de chegada (lambda): "))
+            mu = float(input("Digite a taxa média de serviço (mu): "))
+            s = int(input("Digite o número de servidores (s): "))
+            n = int(input("Digite o número de clientes no sistema (n): "))
+            r = int(input("Digite o número de clientes para Pr (r): "))
+            t = float(input("Digite o tempo t para calcular P(W > t) e P(Wq > t): "))
+            queue = MMs(lamb=lamb, mu=mu, k=1, s=s, n=n, r=r, t=t)
+            res = queue.calculate_metrics()
+            print(res)
         case "3":
             queue = MM1K(lamb=5, mu=7, capacity=5)
             res = queue.calculate_metrics()
