@@ -1,4 +1,3 @@
-from math import exp
 from typing import Dict
 
 from models.base_queue import BaseQueueModel

@@ -1,4 +1,4 @@
-from math import exp, factorial
+from math import factorial
 from typing import Dict
 
 from models.base_queue import BaseQueueModel
