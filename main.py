@@ -3,6 +3,7 @@ from models.mm1k import MM1K
 from models.mmsk import MMsK
 from models.mm1n import MM1N
 from models.mmsn import MMSN
+from models.mg1 import MG1
 
 
 def main():
@@ -13,6 +14,7 @@ def main():
     print("4. M/M/s>1/K")
     print("5. M/M/1 com população finita (N)")
     print("6. M/M/s>1 com população finita (N)")
+    print("7. M/G/1")
     choice = input()
 
     match choice:
@@ -66,6 +68,12 @@ def main():
             n = int(input("Digite o número de clientes no sistema (n): "))
             N = int(input("Digite o tamanho da população (N): "))
             queue = MMSN(lamb=lamb, mu=mu, k=1, s=s, n=n, N=N)
+            res = queue.calculate_metrics()
+            print(res)
+        case "7":
+            lamb = float(input("Digite a taxa média de chegada (lambda): "))
+            mu = float(input("Digite a taxa média de serviço (mu): "))
+            queue = MG1(lamb=lamb, mu=mu, k=1, s=1)
             res = queue.calculate_metrics()
             print(res)
 

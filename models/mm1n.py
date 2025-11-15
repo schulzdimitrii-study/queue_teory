@@ -1,5 +1,5 @@
-from math import comb, factorial
-from typing import Dict, Optional
+from math import factorial
+from typing import Dict
 
 from models.base_queue import BaseQueueModel
 
