@@ -56,8 +56,7 @@ def main():
             mu = float(input("Digite a taxa média de serviço (mu): "))
             n = int(input("Digite o número de clientes no sistema (n): "))
             N = int(input("Digite o tamanho da população (N): "))
-            n_for_prob = None if n < 0 else n
-            queue = MM1N(lamb=lamb, mu=mu, k=1, s=1, n=n, N=N, n_for_prob=n_for_prob)
+            queue = MM1N(lamb=lamb, mu=mu, k=1, s=1, n=n, N=N)
             res = queue.calculate_metrics()
             print(res)
         case "6":
