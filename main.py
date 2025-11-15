@@ -1,7 +1,7 @@
 from models.mm1 import MM1
 from models.mm1k import MM1K
 from models.mmsk import MMsK
-from models.mmsn import MMsN
+from models.mm1n import MM1N
 
 
 def main():
@@ -10,7 +10,7 @@ def main():
     print("2. M/M/s>1")
     print("3. M/M/1/K")
     print("4. M/M/s>1/K")
-    print("5. M/M/s com população finita (N)")
+    print("5. M/M/1 com população finita (N)")
     choice = input()
 
     match choice:
@@ -50,17 +50,12 @@ def main():
             res = queue.calculate_metrics()
             print(res)
         case "5":
-            print("\n[M/M/s com população finita (N)]")
-            lamb = float(input("Digite λ (taxa média de chegada): "))
-            mu = float(input("Digite μ (taxa média de serviço): "))
-            s = int(input("Digite s (número de servidores): "))
-            N = int(input("Digite N (tamanho da população finita): "))
-            n = int(
-                input("Opcional: valor de n para calcular Pn (ou -1 para ignorar): ")
-            )
-
+            lamb = float(input("Digite a taxa média de chegada (lambda): "))
+            mu = float(input("Digite a taxa média de serviço (mu): "))
+            n = int(input("Digite o número de clientes no sistema (n): "))
+            N = int(input("Digite o tamanho da população (N): "))
             n_for_prob = None if n < 0 else n
-            queue = MMsN(lamb=lamb, mu=mu, servers=s, n=N, n_for_prob=n_for_prob)
+            queue = MM1N(lamb=lamb, mu=mu, k=1, s=1, n=n, N=N, n_for_prob=n_for_prob)
             res = queue.calculate_metrics()
             print(res)
 
