@@ -5,7 +5,6 @@ from models.mmsk import MMsK
 from models.mm1n import MM1N
 from models.mmsn import MMSN
 from models.mg1 import MG1
-from models.mcpcis1 import mcpcis1
 from models.mcpci import mcpci
 from models.mcpsi import mcpsi
 
@@ -36,12 +35,13 @@ def main():
         case "2":
             lamb = float(input("Digite a taxa média de chegada (lambda): "))
             mu = float(input("Digite a taxa média de serviço (mu): "))
-            servers = int(input("Digite o número de servidores (s): "))
+            s = int(input("Digite o número de servidores (s): "))
             n = int(input("Digite o número de clientes no sistema (n): "))
             r = int(input("Digite o número de clientes para Pn (r): "))
             t = float(input("Digite o tempo t para calcular P(W > t) e P(Wq > t): "))
-            queue = MMsK(lamb=lamb, mu=mu, k=float('inf'), servers=servers, n=n, r=r, t=t)
+            queue = MMS(lamb=lamb, mu=mu, k=1, s=s, n=n, r=r, t=t)
             res = queue.calculate_metrics()
+            print(res)
         case "3":
             lamb = float(input("Digite a taxa média de chegada (lambda): "))
             mu = float(input("Digite a taxa média de serviço (mu): "))
