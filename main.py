@@ -6,6 +6,8 @@ from models.mm1n import MM1N
 from models.mmsn import MMSN
 from models.mg1 import MG1
 from models.mcpcis1 import mcpcis1
+from models.mcpci import mcpci
+from models.mcpsi import mcpsi
 
 
 def main():
@@ -17,7 +19,8 @@ def main():
     print("5. M/M/1 com população finita (N)")
     print("6. M/M/s>1 com população finita (N)")
     print("7. M/G/1")
-    print("8. M/M/1 com prioridades (com interrupção)")
+    print("8. Modelos com prioridade (com interrupção)")
+    print("9. Modelos com prioridade (sem interrupção)")
     choice = input()
 
     match choice:
@@ -82,11 +85,27 @@ def main():
         case "8":
             lamb = float(input("Digite a taxa média de chegada total (lambda): "))
             mu = float(input("Digite a taxa média de serviço (mu): "))
-            lamb1 = float(input("Digite a taxa média de chegada da classe 1 (lambda1): "))
-            lamb2 = float(input("Digite a taxa média de chegada da classe 2 (lambda2): "))
-            lamb3 = float(input("Digite a taxa média de chegada da classe 3 (lambda3): "))
+            k = int(input("Digite o número de classes de prioridade (k): "))
+            s = int(input("Digite o número de servidores (s): "))
+            lamb_list = []
+            for i in range(1, k + 1):
+                lamb_i = float(input(f"Digite a taxa média de chegada para a classe {i} (lambda{i}): "))
+                lamb_list.append(lamb_i)
 
-            queue = mcpcis1(lamb=lamb, mu=mu, k=1, s=1, lamb1=lamb1, lamb2=lamb2, lamb3=lamb3)
+            queue = mcpci(lamb=lamb, mu=mu, k=k, s=s, lamb_list=lamb_list)
+            res = queue.calculate_metrics()
+            print(res)
+        case "9":
+            lamb = float(input("Digite a taxa média de chegada total (lambda): "))
+            mu = float(input("Digite a taxa média de serviço (mu): "))
+            k = int(input("Digite o número de classes de prioridade (k): "))
+            s = int(input("Digite o número de servidores (s): "))
+            lamb_list = []
+            for i in range(1, k + 1):
+                lamb_i = float(input(f"Digite a taxa média de chegada para a classe {i} (lambda{i}): "))
+                lamb_list.append(lamb_i)
+
+            queue = mcpsi(lamb=lamb, mu=mu, k=k, s=s, lamb_list=lamb_list)
             res = queue.calculate_metrics()
             print(res)
 
