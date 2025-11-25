@@ -194,11 +194,23 @@
                 <i class="bi bi-info-circle-fill me-2"></i>Interpretação dos Resultados
             </h5>
             <div class="row g-4">
+                                <div class="col-md-6" x-show="results?.metrics?.P0">
+                                    <div class="interpretation-card">
+                                        <div class="interpretation-icon">P₀</div>
+                                        <div class="interpretation-content">
+                                            <h6 class="interpretation-title">Sistema Vazio</h6>
+                                            <p class="interpretation-value">
+                                                <span x-text="(results?.metrics?.P0 * 100).toFixed(2)"></span>%
+                                            </p>
+                                            <p class="interpretation-desc">Probabilidade de não haver clientes</p>
+                                        </div>
+                                    </div>
+                                </div>
                 <div class="col-md-6" x-show="results?.metrics?.Rho">
                     <div class="interpretation-card">
                         <div class="interpretation-icon">ρ</div>
                         <div class="interpretation-content">
-                            <h6 class="interpretation-title">TAXA DE UTILIZAÇÃO</h6>
+                            <h6 class="interpretation-title">Taxa de Utilização</h6>
                             <p class="interpretation-value" x-text="results?.metrics?.Rho"></p>
                             <p class="interpretation-desc">
                                 <span x-show="results?.metrics?.Rho < 1" class="badge bg-success">
@@ -211,57 +223,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6" x-show="results?.metrics?.L">
-                    <div class="interpretation-card">
-                        <div class="interpretation-icon">L</div>
-                        <div class="interpretation-content">
-                            <h6 class="interpretation-title">CLIENTES NO SISTEMA</h6>
-                            <p class="interpretation-value" x-text="results?.metrics?.L"></p>
-                            <p class="interpretation-desc">Número médio de clientes no sistema</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6" x-show="results?.metrics?.Lq">
-                    <div class="interpretation-card">
-                        <div class="interpretation-icon">Lq</div>
-                        <div class="interpretation-content">
-                            <h6 class="interpretation-title">CLIENTES NA FILA</h6>
-                            <p class="interpretation-value" x-text="results?.metrics?.Lq"></p>
-                            <p class="interpretation-desc">Número médio de clientes aguardando</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6" x-show="results?.metrics?.W">
-                    <div class="interpretation-card">
-                        <div class="interpretation-icon">W</div>
-                        <div class="interpretation-content">
-                            <h6 class="interpretation-title">TEMPO NO SISTEMA</h6>
-                            <p class="interpretation-value">
-                                <span x-text="results?.metrics?.W"></span> <small>unidades de tempo</small>
-                            </p>
-                            <p class="interpretation-desc">Tempo médio total no sistema</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6" x-show="results?.metrics?.Wq">
-                    <div class="interpretation-card">
-                        <div class="interpretation-icon">Wq</div>
-                        <div class="interpretation-content">
-                            <h6 class="interpretation-title">TEMPO NA FILA</h6>
-                            <p class="interpretation-value">
-                                <span x-text="results?.metrics?.Wq"></span> <small>unidades de tempo</small>
-                            </p>
-                            <p class="interpretation-desc">Tempo médio aguardando atendimento</p>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-md-6" x-show="results?.metrics?.P0">
                     <div class="interpretation-card">
                         <div class="interpretation-icon">P₀</div>
                         <div class="interpretation-content">
-                            <h6 class="interpretation-title">SISTEMA VAZIO</h6>
+                            <h6 class="interpretation-title">Sistema Vazio</h6>
                             <p class="interpretation-value">
-                                <span x-text="(results?.metrics?.P0 * 100).toFixed(1)"></span>%
+                                <span x-text="(results?.metrics?.P0 * 100).toFixed(2)"></span>%
                             </p>
                             <p class="interpretation-desc">Probabilidade de não haver clientes</p>
                         </div>
@@ -271,7 +239,7 @@
                     <div class="interpretation-card">
                         <div class="interpretation-icon">Pₙ</div>
                         <div class="interpretation-content">
-                            <h6 class="interpretation-title">PROBABILIDADE DE N CLIENTES</h6>
+                            <h6 class="interpretation-title">Probabilidade de n clientes</h6>
                             <p class="interpretation-value">
                                 <span x-text="(results?.metrics?.Pn * 100).toFixed(2)"></span>%
                             </p>
@@ -283,7 +251,7 @@
                     <div class="interpretation-card">
                         <div class="interpretation-icon">Pᵣ</div>
                         <div class="interpretation-content">
-                            <h6 class="interpretation-title">PROBABILIDADE DE R+ CLIENTES</h6>
+                            <h6 class="interpretation-title">Probabilidade de r+ clientes</h6>
                             <p class="interpretation-value">
                                 <span x-text="(results?.metrics?.Pr * 100).toFixed(2)"></span>%
                             </p>
@@ -291,15 +259,59 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6" x-show="results?.metrics?.L">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">L</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Clientes no Sistema</h6>
+                            <p class="interpretation-value" x-text="results?.metrics?.L"></p>
+                            <p class="interpretation-desc">Número médio de clientes no sistema</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Lq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Lq</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Clientes na Fila</h6>
+                            <p class="interpretation-value" x-text="results?.metrics?.Lq"></p>
+                            <p class="interpretation-desc">Número médio de clientes aguardando</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.W">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">W</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Tempo no Sistema</h6>
+                            <p class="interpretation-value">
+                                <span x-text="results?.metrics?.W"></span> <small>unidades de tempo</small>
+                            </p>
+                            <p class="interpretation-desc">Tempo médio total no sistema</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Wq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Wq</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Tempo na Fila</h6>
+                            <p class="interpretation-value">
+                                <span x-text="results?.metrics?.Wq"></span> <small>unidades de tempo</small>
+                            </p>
+                            <p class="interpretation-desc">Tempo médio aguardando atendimento</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-6" x-show="results?.metrics?.pw">
                     <div class="interpretation-card">
                         <div class="interpretation-icon">P(W&gt;t)</div>
                         <div class="interpretation-content">
-                            <h6 class="interpretation-title">PROB. TEMPO > T</h6>
+                            <h6 class="interpretation-title">PROB. TEMPO &gt; T</h6>
                             <p class="interpretation-value">
                                 <span x-text="(results?.metrics?.pw * 100).toFixed(2)"></span>%
                             </p>
-                            <p class="interpretation-desc">Prob. de tempo no sistema > <span x-text="formData.t"></span></p>
+                            <p class="interpretation-desc">Prob. de tempo no sistema &gt; <span x-text="formData.t"></span></p>
                         </div>
                     </div>
                 </div>
@@ -307,11 +319,60 @@
                     <div class="interpretation-card">
                         <div class="interpretation-icon">P(Wq&gt;t)</div>
                         <div class="interpretation-content">
-                            <h6 class="interpretation-title">PROB. ESPERA > T</h6>
+                            <template x-if="selectedModel === 'MMS'">
+                                <div>
+                                    <h6 class="interpretation-title">Probabilidade de espera &gt; t</h6>
+                                    <p class="interpretation-value">
+                                        <span x-text="(results?.metrics?.pwq * 100).toFixed(2)"></span>%
+                                    </p>
+                                    <p class="interpretation-desc">Probabilidade de tempo na fila &gt; <span x-text="formData.t"></span></p>
+                                </div>
+                            </template>
+                            <template x-if="selectedModel !== 'MMS'">
+                                <div>
+                                    <h6 class="interpretation-title">Tempo na Fila &gt; t</h6>
+                                    <p class="interpretation-value">
+                                        <span x-text="results?.metrics?.pwq"></span> <small>unidades de tempo</small>
+                                    </p>
+                                    <p class="interpretation-desc">Tempo médio aguardando atendimento &gt; <span x-text="formData.t"></span></p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Wq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Wq</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Tempo na Fila</h6>
+                            <p class="interpretation-value">
+                                <span x-text="results?.metrics?.Wq"></span> <small>unidades de tempo</small>
+                            </p>
+                            <p class="interpretation-desc">Tempo médio aguardando atendimento</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.pw">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">P(W&gt;t)</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Prob. tempo &gt; t</h6>
+                            <p class="interpretation-value">
+                                <span x-text="(results?.metrics?.pw * 100).toFixed(2)"></span>%
+                            </p>
+                            <p class="interpretation-desc">Prob. de tempo no sistema &gt; <span x-text="formData.t"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.pwq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">P(Wq&gt;t)</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Prob. espera &gt; t</h6>
                             <p class="interpretation-value">
                                 <span x-text="(results?.metrics?.pwq * 100).toFixed(2)"></span>%
                             </p>
-                            <p class="interpretation-desc">Prob. de tempo na fila > <span x-text="formData.t"></span></p>
+                            <p class="interpretation-desc">Prob. de tempo na fila &gt; <span x-text="formData.t"></span></p>
                         </div>
                     </div>
                 </div>
@@ -414,7 +475,6 @@ function queueCalculator() {
             this.results = null;
 
             try {
-                // Preparar dados para envio
                 const payload = { ...this.formData };
                 
                 // Converter lamb_list de string para array se necessário
@@ -424,8 +484,6 @@ function queueCalculator() {
                         .map(x => parseFloat(x.trim()))
                         .filter(x => !isNaN(x));
                 }
-
-                console.log('Enviando dados:', payload);
 
                 const response = await fetch('/api/calculate', {
                     method: 'POST',
