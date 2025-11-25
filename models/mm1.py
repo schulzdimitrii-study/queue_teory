@@ -63,7 +63,7 @@ class MM1(BaseQueueModel):
         return 1 / (self.mu - self.lamb)
     
     def __calculate_avg_time_queue(self) -> float:
-        return self.rho / (self.mu * (1 - self.rho))
+        return 60 * self.rho / (self.mu * (1 - self.rho))
     
     def __calculate_waiting_time_system_exceeding_t(self) -> float:
         return exp(-1 * (self.mu - self.lamb) * self.t)
