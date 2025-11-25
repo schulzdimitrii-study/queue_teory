@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/">Simulador de Modelos de Filas</a>
+    </div>
+</nav>
+
+<main class="container mb-5" x-data="queueCalculator()">
+
+    <h2 class="text-center mb-4">Escolha um modelo:</h2>
+
+    <form 
+        class="card p-4 shadow-sm"
+        @submit.prevent="calculateQueue"
+    >
+
+        <!-- Seleção do Modelo -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Selecione o Modelo</label>
+            <select 
+                x-model="formData.model_type" 
+                class="form-select"
+                @change="updateFieldsVisibility"
+            >
+                <option value="">-- Escolha um modelo --</option>
+                <option value="MM1">M/M/1 - Fila básica com 1 servidor</option>
+                <option value="MMS">M/M/s - Fila básica com s servidores</option>
+                <option value="MM1K">M/M/1/K - Fila com 1 servidor e capacidade K</option>
+                <option value="MMSK">M/M/s/K - Fila com s servidores e capacidade K</option>
+                <option value="MM1N">M/M/1/N - Fila com 1 servidor e população finita N</option>
+                <option value="MMSN">M/M/s/N - Fila com s servidores e população N</option>
+                <option value="MG1">M/G/1 - Fila com tempo de serviço geral</option>
+                <option value="MCPCI">Modelo com Prioridades (Classes Independentes)</option>
+                <option value="MCPSI">Modelo com Prioridades (Sistema Integrado)</option>
+            </select>
+        </div>
+
+        <!-- Campos Comuns -->
+        <div x-show="showCommonFields" x-transition>
+            <div class="mb-3">
+                <label class="form-label">λ - Taxa de Chegada</label>
+                <input 
+                    type="number" 
+                    step="0.01" 
+                    x-model.number="formData.lamb" 
+                    class="form-control"
+                >
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">μ - Taxa de Serviço</label>
+                <input 
+                    type="number" 
+                    step="0.01" 
+                    x-model.number="formData.mu" 
+                    class="form-control"
+                >
+            </div>
+
+            <!-- Campos opcionais para MM1 -->
+            <div x-show="showMM1Fields" x-transition class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">n - Clientes no sistema (Pn)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="formData.n" 
+                        class="form-control" 
+                        value="0"
+                    >
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">r - Clientes para Pr</label>
+                    <input 
+                        type="number" 
+                        x-model.number="formData.r" 
+                        class="form-control" 
+                        value="0"
+                    >
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">t - Tempo (para P(W > t))</label>
+                    <input 
+                        type="number" 
+                        step="0.01" 
+                        x-model.number="formData.t" 
+                        class="form-control" 
+                        value="0"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Campo específico: Servidores -->
+        <div x-show="showServersField" x-transition class="mb-3">
+            <label class="form-label">s - Número de Servidores</label>
+            <input 
+                type="number" 
+                x-model.number="formData.s" 
+                class="form-control"
+            >
+            <small class="text-muted">Deve ser maior que 1</small>
+        </div>
+
+        <!-- Campo específico: Capacidade K -->
+        <div x-show="showCapacityField" x-transition class="mb-3">
+            <label class="form-label">K - Capacidade do Sistema</label>
+            <input 
+                type="number" 
+                x-model.number="formData.k" 
+                class="form-control"
+            >
+        </div>
+
+        <!-- Campo específico: População N -->
+        <div x-show="showPopulationField" x-transition class="mb-3">
+            <label class="form-label">N - População Total (Fonte Finita)</label>
+            <input 
+                type="number" 
+                x-model.number="formData.N" 
+                class="form-control"
+            >
+        </div>
+
+        <!-- Campo específico: n para outros modelos -->
+        <div x-show="showNField" x-transition class="mb-3">
+            <label class="form-label">n - Número de clientes (para Pn)</label>
+            <input 
+                type="number" 
+                x-model.number="formData.n" 
+                class="form-control"
+                value="0"
+            >
+        </div>
+
+        <!-- Campo específico: Taxas de prioridades -->
+        <div x-show="showPriorityFields" x-transition class="mb-3">
+            <label class="form-label">λ_list - Taxas de Chegada por Prioridade</label>
+            <input 
+                type="text" 
+                x-model="formData.lamb_list" 
+                class="form-control"
+                placeholder="Ex: 1.5, 2.0, 3.5"
+            >
+            <small class="text-muted">Separe as taxas por vírgula (λ₁, λ₂, λ₃, ...)</small>
+            
+            <div class="mt-2">
+                <label class="form-label">k - Classe de Prioridade</label>
+                <input 
+                    type="number" 
+                    x-model.number="formData.k" 
+                    class="form-control"
+                >
+                <small class="text-muted">Número da classe de prioridade a analisar</small>
+            </div>
+        </div>
+
+        <!-- Botão de submit com loading -->
+        <div class="d-flex justify-content-center">
+            <button 
+                class="btn btn-primary w-50 mt-3" 
+                type="submit"
+                :disabled="loading"
+            >
+                <span x-show="!loading">Simular</span>
+                <span x-show="loading">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Calculando...
+                </span>
+            </button>
+        </div>
+
+        <!-- Mensagem de erro -->
+        <div x-show="error" x-transition class="alert alert-danger mt-3" role="alert">
+            <strong>Erro:</strong> <span x-text="error"></span>
+        </div>
+    </form>
+
+    <!-- Área de Resultados -->
+    <div 
+        x-show="results" 
+        x-transition
+        class="card p-4 shadow-sm mt-4"
+    >
+        <h3 class="text-center mb-4">
+            Resultados - <span x-text="results?.model_name || results?.model"></span>
+        </h3>
+        
+        <div class="row">
+            <template x-for="(value, key) in results?.metrics" :key="key">
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-dark text-white h-100">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted" x-text="key"></h6>
+                            <p class="card-text fs-4" x-text="value"></p>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Interpretações -->
+        <div class="interpretations-section">
+            <h5 class="mb-4">
+                <i class="bi bi-info-circle-fill me-2"></i>Interpretação dos Resultados
+            </h5>
+            <div class="row g-4">
+                <div class="col-md-6" x-show="results?.metrics?.Rho">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">ρ</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Taxa de Utilização</h6>
+                            <p class="interpretation-value" x-text="results?.metrics?.Rho"></p>
+                            <p class="interpretation-desc">
+                                <span x-show="results?.metrics?.Rho < 1" class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill"></i> Sistema Estável
+                                </span>
+                                <span x-show="results?.metrics?.Rho >= 1" class="badge bg-danger">
+                                    <i class="bi bi-x-circle-fill"></i> Sistema Instável
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.L">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">L</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Clientes no Sistema</h6>
+                            <p class="interpretation-value" x-text="results?.metrics?.L"></p>
+                            <p class="interpretation-desc">Número médio de clientes no sistema</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Lq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Lq</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Clientes na Fila</h6>
+                            <p class="interpretation-value" x-text="results?.metrics?.Lq"></p>
+                            <p class="interpretation-desc">Número médio de clientes aguardando</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.W">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">W</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Tempo no Sistema</h6>
+                            <p class="interpretation-value">
+                                <span x-text="results?.metrics?.W"></span> <small>unidades de tempo</small>
+                            </p>
+                            <p class="interpretation-desc">Tempo médio total no sistema</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Wq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Wq</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Tempo na Fila</h6>
+                            <p class="interpretation-value">
+                                <span x-text="results?.metrics?.Wq"></span> <small>unidades de tempo</small>
+                            </p>
+                            <p class="interpretation-desc">Tempo médio aguardando atendimento</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.P0">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">P₀</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Sistema Vazio</h6>
+                            <p class="interpretation-value">
+                                <span x-text="(results?.metrics?.P0 * 100).toFixed(1)"></span>%
+                            </p>
+                            <p class="interpretation-desc">Probabilidade de não haver clientes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+function queueCalculator() {
+    return {
+        formData: {
+            model_type: '',
+            lamb: 0,
+            mu: 0,
+            k: 0,
+            s: 1,
+            n: 0,
+            r: 0,
+            t: 0,
+            N: 0,
+            lamb_list: ''
+        },
+        loading: false,
+        error: null,
+        results: null,
+        showCommonFields: false,
+        showServersField: false,
+        showCapacityField: false,
+        showPopulationField: false,
+        showNField: false,
+        showMM1Fields: false,
+        showPriorityFields: false,
+
+        updateFieldsVisibility() {
+            const selected = this.formData.model_type;
+            
+            // Reset todos os campos
+            this.showCommonFields = false;
+            this.showCapacityField = false;
+            this.showServersField = false;
+            this.showPopulationField = false;
+            this.showNField = false;
+            this.showMM1Fields = false;
+            this.showPriorityFields = false;
+            
+            if (!selected) return;
+            
+            // Campos comuns para todos os modelos
+            this.showCommonFields = true;
+            
+            // Configurar campos específicos por modelo
+            switch(selected) {
+                case 'MM1':
+                    this.showMM1Fields = true;
+                    break;
+                
+                case 'MMS':
+                    this.showServersField = true;
+                    this.showMM1Fields = true;  // MMS também usa n, r, t
+                    break;
+                    
+                case 'MM1K':
+                    this.showCapacityField = true;
+                    this.showNField = true;
+                    break;
+                
+                case 'MMSK':
+                    this.showServersField = true;
+                    this.showCapacityField = true;
+                    this.showNField = true;
+                    break;
+                    
+                case 'MM1N':
+                    this.showPopulationField = true;
+                    this.showNField = true;
+                    break;
+                    
+                case 'MMSN':
+                    this.showServersField = true;
+                    this.showPopulationField = true;
+                    this.showNField = true;
+                    break;
+                    
+                case 'MG1':
+                    // Apenas campos comuns
+                    break;
+                    
+                case 'MCPCI':
+                case 'MCPSI':
+                    this.showServersField = true;
+                    this.showPriorityFields = true;
+                    break;
+            }
+        },
+
+        async calculateQueue() {
+            this.loading = true;
+            this.error = null;
+            this.results = null;
+
+            try {
+                // Preparar dados para envio
+                const payload = { ...this.formData };
+                
+                // Converter lamb_list de string para array se necessário
+                if (payload.lamb_list && typeof payload.lamb_list === 'string') {
+                    payload.lamb_list = payload.lamb_list
+                        .split(',')
+                        .map(x => parseFloat(x.trim()))
+                        .filter(x => !isNaN(x));
+                }
+
+                console.log('Enviando dados:', payload);
+
+                const response = await fetch('/api/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Erro ao calcular métricas');
+                }
+
+                if (data.success) {
+                    this.results = data;
+                } else {
+                    this.error = data.error;
+                }
+            } catch (err) {
+                this.error = err.message;
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
+}
+</script>
+{% endblock %}
