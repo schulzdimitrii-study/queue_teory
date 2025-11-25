@@ -184,28 +184,28 @@
         class="card p-4 shadow-sm mt-4"
     >
         <h3 class="text-center mb-4">
-            Resultados - <span x-text="results?.model_name || results?.model"></span>
+            <i class="bi bi-graph-up me-2"></i>
+            <span x-text="results?.model_name || results?.model"></span>
         </h3>
         
-        <div class="row">
-            <template x-for="(value, key) in results?.metrics" :key="key">
-                <div class="col-md-4 mb-3">
-                    <div class="card bg-dark text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted" x-text="key"></h6>
-                            <p class="card-text fs-4" x-text="value"></p>
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </div>
-
         <!-- Interpretações -->
         <div class="interpretations-section">
             <h5 class="mb-4">
                 <i class="bi bi-info-circle-fill me-2"></i>Interpretação dos Resultados
             </h5>
             <div class="row g-4">
+                                <div class="col-md-6" x-show="results?.metrics?.P0">
+                                    <div class="interpretation-card">
+                                        <div class="interpretation-icon">P₀</div>
+                                        <div class="interpretation-content">
+                                            <h6 class="interpretation-title">Sistema Vazio</h6>
+                                            <p class="interpretation-value">
+                                                <span x-text="(results?.metrics?.P0 * 100).toFixed(2)"></span>%
+                                            </p>
+                                            <p class="interpretation-desc">Probabilidade de não haver clientes</p>
+                                        </div>
+                                    </div>
+                                </div>
                 <div class="col-md-6" x-show="results?.metrics?.Rho">
                     <div class="interpretation-card">
                         <div class="interpretation-icon">ρ</div>
@@ -220,6 +220,42 @@
                                     <i class="bi bi-x-circle-fill"></i> Sistema Instável
                                 </span>
                             </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.P0">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">P₀</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Sistema Vazio</h6>
+                            <p class="interpretation-value">
+                                <span x-text="(results?.metrics?.P0 * 100).toFixed(2)"></span>%
+                            </p>
+                            <p class="interpretation-desc">Probabilidade de não haver clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Pn">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Pₙ</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Probabilidade de n clientes</h6>
+                            <p class="interpretation-value">
+                                <span x-text="(results?.metrics?.Pn * 100).toFixed(2)"></span>%
+                            </p>
+                            <p class="interpretation-desc">Probabilidade de ter <span x-text="formData.n"></span> clientes no sistema</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Pr">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Pᵣ</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Probabilidade de r+ clientes</h6>
+                            <p class="interpretation-value">
+                                <span x-text="(results?.metrics?.Pr * 100).toFixed(2)"></span>%
+                            </p>
+                            <p class="interpretation-desc">Probabilidade de ter <span x-text="formData.r"></span> ou mais clientes</p>
                         </div>
                     </div>
                 </div>
@@ -267,15 +303,76 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6" x-show="results?.metrics?.P0">
+                <div class="col-md-6" x-show="results?.metrics?.pw">
                     <div class="interpretation-card">
-                        <div class="interpretation-icon">P₀</div>
+                        <div class="interpretation-icon">P(W&gt;t)</div>
                         <div class="interpretation-content">
-                            <h6 class="interpretation-title">Sistema Vazio</h6>
+                            <h6 class="interpretation-title">PROB. TEMPO &gt; T</h6>
                             <p class="interpretation-value">
-                                <span x-text="(results?.metrics?.P0 * 100).toFixed(1)"></span>%
+                                <span x-text="(results?.metrics?.pw * 100).toFixed(2)"></span>%
                             </p>
-                            <p class="interpretation-desc">Probabilidade de não haver clientes</p>
+                            <p class="interpretation-desc">Prob. de tempo no sistema &gt; <span x-text="formData.t"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.pwq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">P(Wq&gt;t)</div>
+                        <div class="interpretation-content">
+                            <template x-if="selectedModel === 'MMS'">
+                                <div>
+                                    <h6 class="interpretation-title">Probabilidade de espera &gt; t</h6>
+                                    <p class="interpretation-value">
+                                        <span x-text="(results?.metrics?.pwq * 100).toFixed(2)"></span>%
+                                    </p>
+                                    <p class="interpretation-desc">Probabilidade de tempo na fila &gt; <span x-text="formData.t"></span></p>
+                                </div>
+                            </template>
+                            <template x-if="selectedModel !== 'MMS'">
+                                <div>
+                                    <h6 class="interpretation-title">Tempo na Fila &gt; t</h6>
+                                    <p class="interpretation-value">
+                                        <span x-text="results?.metrics?.pwq"></span> <small>unidades de tempo</small>
+                                    </p>
+                                    <p class="interpretation-desc">Tempo médio aguardando atendimento &gt; <span x-text="formData.t"></span></p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.Wq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">Wq</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Tempo na Fila</h6>
+                            <p class="interpretation-value">
+                                <span x-text="results?.metrics?.Wq"></span> <small>unidades de tempo</small>
+                            </p>
+                            <p class="interpretation-desc">Tempo médio aguardando atendimento</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.pw">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">P(W&gt;t)</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Prob. tempo &gt; t</h6>
+                            <p class="interpretation-value">
+                                <span x-text="(results?.metrics?.pw * 100).toFixed(2)"></span>%
+                            </p>
+                            <p class="interpretation-desc">Prob. de tempo no sistema &gt; <span x-text="formData.t"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" x-show="results?.metrics?.pwq">
+                    <div class="interpretation-card">
+                        <div class="interpretation-icon">P(Wq&gt;t)</div>
+                        <div class="interpretation-content">
+                            <h6 class="interpretation-title">Prob. espera &gt; t</h6>
+                            <p class="interpretation-value">
+                                <span x-text="(results?.metrics?.pwq * 100).toFixed(2)"></span>%
+                            </p>
+                            <p class="interpretation-desc">Prob. de tempo na fila &gt; <span x-text="formData.t"></span></p>
                         </div>
                     </div>
                 </div>
@@ -313,7 +410,6 @@ function queueCalculator() {
 
         updateFieldsVisibility() {
             const selected = this.formData.model_type;
-            
             // Reset todos os campos
             this.showCommonFields = false;
             this.showCapacityField = false;
@@ -322,54 +418,54 @@ function queueCalculator() {
             this.showNField = false;
             this.showMM1Fields = false;
             this.showPriorityFields = false;
-            
+
             if (!selected) return;
-            
-            // Campos comuns para todos os modelos
             this.showCommonFields = true;
-            
-            // Configurar campos específicos por modelo
-            switch(selected) {
-                case 'MM1':
-                    this.showMM1Fields = true;
-                    break;
-                
-                case 'MMS':
-                    this.showServersField = true;
-                    this.showMM1Fields = true;  // MMS também usa n, r, t
-                    break;
-                    
-                case 'MM1K':
-                    this.showCapacityField = true;
-                    this.showNField = true;
-                    break;
-                
-                case 'MMSK':
-                    this.showServersField = true;
-                    this.showCapacityField = true;
-                    this.showNField = true;
-                    break;
-                    
-                case 'MM1N':
-                    this.showPopulationField = true;
-                    this.showNField = true;
-                    break;
-                    
-                case 'MMSN':
-                    this.showServersField = true;
-                    this.showPopulationField = true;
-                    this.showNField = true;
-                    break;
-                    
-                case 'MG1':
-                    // Apenas campos comuns
-                    break;
-                    
-                case 'MCPCI':
-                case 'MCPSI':
-                    this.showServersField = true;
-                    this.showPriorityFields = true;
-                    break;
+
+            // MM1: lamb, mu, k, s, n, r, t
+            if (selected === 'MM1') {
+                this.showMM1Fields = true;
+            }
+            // MMS: lamb, mu, s, k, n, r, t
+            else if (selected === 'MMS') {
+                this.showServersField = true;
+                this.showMM1Fields = true;
+            }
+            // MM1K: lamb, mu, k, s, n
+            else if (selected === 'MM1K') {
+                this.showCapacityField = true;
+                this.showServersField = true;
+                this.showNField = true;
+            }
+            // MM1N: lamb, mu, k, s, n, N
+            else if (selected === 'MM1N') {
+                this.showCapacityField = true;
+                this.showServersField = true;
+                this.showNField = true;
+                this.showPopulationField = true;
+            }
+            // MMSK: lamb, mu, s, k, n
+            else if (selected === 'MMSK') {
+                this.showServersField = true;
+                this.showCapacityField = true;
+                this.showNField = true;
+            }
+            // MMSN: lamb, mu, s, N, k, n
+            else if (selected === 'MMSN') {
+                this.showServersField = true;
+                this.showPopulationField = true;
+                this.showCapacityField = true;
+                this.showNField = true;
+            }
+            // MG1: lamb, mu, k, s
+            else if (selected === 'MG1') {
+                this.showCapacityField = true;
+                this.showServersField = true;
+            }
+            // MCPCI/MCPSI: lamb, mu, s, k, lamb_list
+            else if (selected === 'MCPCI' || selected === 'MCPSI') {
+                this.showServersField = true;
+                this.showPriorityFields = true;
             }
         },
 
@@ -379,7 +475,6 @@ function queueCalculator() {
             this.results = null;
 
             try {
-                // Preparar dados para envio
                 const payload = { ...this.formData };
                 
                 // Converter lamb_list de string para array se necessário
@@ -389,8 +484,6 @@ function queueCalculator() {
                         .map(x => parseFloat(x.trim()))
                         .filter(x => !isNaN(x));
                 }
-
-                console.log('Enviando dados:', payload);
 
                 const response = await fetch('/api/calculate', {
                     method: 'POST',

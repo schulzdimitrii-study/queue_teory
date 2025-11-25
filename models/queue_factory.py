@@ -67,25 +67,25 @@ class QueueFactory:
             "MM1": {
                 "name": "M/M/1",
                 "description": "Fila com chegadas Poisson, atendimento exponencial, 1 servidor",
-                "params": ["lamb", "mu", "n", "r", "t", "k", "s"],
+                "params": ["lamb", "mu", "k", "s", "n", "r", "t"],
                 "required": ["lamb", "mu"],
             },
             "MMS": {
                 "name": "M/M/s",
                 "description": "Fila com s servidores (s > 1)",
-                "params": ["lamb", "mu", "s", "n", "r", "t", "k"],
+                "params": ["lamb", "mu", "s", "k", "n", "r", "t"],
                 "required": ["lamb", "mu", "s"],
             },
             "MM1K": {
                 "name": "M/M/1/K",
                 "description": "Fila M/M/1 com capacidade finita K",
-                "params": ["lamb", "mu", "k", "n", "s"],
+                "params": ["lamb", "mu", "k", "s", "n"],
                 "required": ["lamb", "mu", "k"],
             },
             "MM1N": {
                 "name": "M/M/1/N",
                 "description": "Fila M/M/1 com população finita N",
-                "params": ["lamb", "mu", "n", "N", "k", "s"],
+                "params": ["lamb", "mu", "N", "s", "k", "n"],
                 "required": ["lamb", "mu", "N"],
             },
             "MMSK": {
@@ -97,7 +97,7 @@ class QueueFactory:
             "MMSN": {
                 "name": "M/M/s/N",
                 "description": "Fila com s servidores e população finita N",
-                "params": ["lamb", "mu", "s", "n", "N", "k"],
+                "params": ["lamb", "mu", "s", "N", "k", "n"],
                 "required": ["lamb", "mu", "s", "N"],
             },
             "MG1": {
