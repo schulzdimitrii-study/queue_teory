@@ -2,14 +2,13 @@ from typing import Dict
 
 from models.base_queue import BaseQueueModel
 
+
 class MM1K(BaseQueueModel):
-    def __init__(
-        self, lamb: float, mu: float, k: int, s: int, n: int
-    ) -> None:
+    def __init__(self, lamb: float, mu: float, k: int, s: int, n: int) -> None:
         super().__init__(lamb, mu, k, s)
         self.rho = lamb / mu
-        self.k = k  # Capacidade máxima do sistema
-        self.n = n # Número de clientes no sistema para Pn
+        self.n = n
+        self.k = k  # Armazenar k explicitamente
 
         if lamb < 0 or mu <= 0 or s != 1:
             raise ValueError("Parâmetros inválidos: requer λ ≥ 0, μ > 0 e s = 1.")
@@ -33,7 +32,7 @@ class MM1K(BaseQueueModel):
             "L": round(l, 4),
             "Lq": round(lq, 4),
             "W": round(w, 4),
-            "Wq": round(wq, 4)
+            "Wq": round(wq, 4),
         }
 
     def __calculate_probability_system_empty(self) -> float:
@@ -41,21 +40,23 @@ class MM1K(BaseQueueModel):
             return 1 / (self.k + 1)
 
         return (1 - self.rho) / (1 - self.rho ** (self.k + 1))
-    
+
     def __calculate_probability_n_customers_system(self) -> float:
         return ((1 - self.rho) * (self.rho**self.n)) / (1 - self.rho ** (self.k + 1))
-    
+
     def __calculate_probability_k_customers_system(self) -> float:
         return ((1 - self.rho) * (self.rho**self.k)) / (1 - self.rho ** (self.k + 1))
-    
+
     def __calculate_avg_customers_system(self) -> float:
         first_part = self.rho / (1 - self.rho)
-        last_part = ((self.k + 1) * (self.rho ** (self.k + 1))) / (1 - self.rho ** (self.k + 1))
+        last_part = ((self.k + 1) * (self.rho ** (self.k + 1))) / (
+            1 - self.rho ** (self.k + 1)
+        )
         return first_part - last_part
 
     def __calculate_avg_customers_queue(self, l: float, p0: float) -> float:
         return l - (1 - p0)
-    
+
     def __calculate_avg_time_system(self, l: float, pk: float) -> float:
         return l / (self.lamb * (1 - pk))
 

@@ -1,12 +1,12 @@
-from models.mm1 import MM1
-from models.mms1_Lucas import MMS
-from models.mm1k import MM1K
-from models.mmsk import MMsK
-from models.mm1n import MM1N
-from models.mmsn import MMSN
-from models.mg1 import MG1
 from models.mcpci import mcpci
 from models.mcpsi import mcpsi
+from models.mg1 import MG1
+from models.mm1 import MM1
+from models.mm1k import MM1K
+from models.mm1n import MM1N
+from models.mms import MMS
+from models.mmsk import MMsK
+from models.mmsn import MMSN
 
 
 def main():
@@ -89,7 +89,11 @@ def main():
             s = int(input("Digite o número de servidores (s): "))
             lamb_list = []
             for i in range(1, k + 1):
-                lamb_i = float(input(f"Digite a taxa média de chegada para a classe {i} (lambda{i}): "))
+                lamb_i = float(
+                    input(
+                        f"Digite a taxa média de chegada para a classe {i} (lambda{i}): "
+                    )
+                )
                 lamb_list.append(lamb_i)
 
             queue = mcpci(lamb=lamb, mu=mu, k=k, s=s, lamb_list=lamb_list)
@@ -102,7 +106,11 @@ def main():
             s = int(input("Digite o número de servidores (s): "))
             lamb_list = []
             for i in range(1, k + 1):
-                lamb_i = float(input(f"Digite a taxa média de chegada para a classe {i} (lambda{i}): "))
+                lamb_i = float(
+                    input(
+                        f"Digite a taxa média de chegada para a classe {i} (lambda{i}): "
+                    )
+                )
                 lamb_list.append(lamb_i)
 
             queue = mcpsi(lamb=lamb, mu=mu, k=k, s=s, lamb_list=lamb_list)
