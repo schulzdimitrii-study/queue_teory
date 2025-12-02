@@ -78,7 +78,7 @@ class MCPCI(BaseQueueModel):
         l = l1 + l2 + l3 + l4
         lq = lq1 + lq2 + lq3 + lq4
 
-        return {
+        data = {
             "Class 1": {
                 "W1": round(w1, 6),
                 "Wq1": round(wq1, 6),
@@ -111,6 +111,13 @@ class MCPCI(BaseQueueModel):
                 "Lq": round(lq, 6),
             },
         }
+
+        if self.lamb3 == 0:
+            del data["Class 3"]
+        if self.lamb4 == 0:
+            del data["Class 4"]
+
+        return data
 
     def __calculate_lambda_sum(self, threshold: int) -> float:
         """
