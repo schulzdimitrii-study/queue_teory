@@ -79,32 +79,37 @@ class MCPCI(BaseQueueModel):
         lq = lq1 + lq2 + lq3 + lq4
 
         return {
-            # Classe 1
-            "W1": round(w1, 6),
-            "Wq1": round(wq1, 6),
-            "L1": round(l1, 6),
-            "Lq1": round(lq1, 6),
-            # Classe 2
-            "W2": round(w2, 6),
-            "Wq2": round(wq2, 6),
-            "L2": round(l2, 6),
-            "Lq2": round(lq2, 6),
-            # Classe 3
-            "W3": round(w3, 6),
-            "Wq3": round(wq3, 6),
-            "L3": round(l3, 6),
-            "Lq3": round(lq3, 6),
-            # Classe 4
-            "W4": round(w4, 6),
-            "Wq4": round(wq4, 6),
-            "L4": round(l4, 6),
-            "Lq4": round(lq4, 6),
-            # Sistema
-            "Rho": round(self.rho, 6),
-            "W": round(w, 6),
-            "Wq": round(wq, 6),
-            "L": round(l, 6),
-            "Lq": round(lq, 6),
+            "Class 1": {
+                "W1": round(w1, 6),
+                "Wq1": round(wq1, 6),
+                "L1": round(l1, 6),
+                "Lq1": round(lq1, 6),
+            },
+            "Class 2": {
+                "W2": round(w2, 6),
+                "Wq2": round(wq2, 6),
+                "L2": round(l2, 6),
+                "Lq2": round(lq2, 6),
+            },
+            "Class 3": {
+                "W3": round(w3, 6),
+                "Wq3": round(wq3, 6),
+                "L3": round(l3, 6),
+                "Lq3": round(lq3, 6),
+            },
+            "Class 4": {
+                "W4": round(w4, 6),
+                "Wq4": round(wq4, 6),
+                "L4": round(l4, 6),
+                "Lq4": round(lq4, 6),
+            },
+            "System": {
+                "Rho": round(self.rho, 6),
+                "W": round(w, 6),
+                "Wq": round(wq, 6),
+                "L": round(l, 6),
+                "Lq": round(lq, 6),
+            },
         }
 
     def __calculate_lambda_sum(self, threshold: int) -> float:
