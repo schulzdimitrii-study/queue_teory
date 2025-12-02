@@ -1,8 +1,8 @@
 from typing import Any, Dict, Type
 
 from models.base_queue import BaseQueueModel
-from models.mcpci import mcpci
-from models.mcpsi import mcpsi
+from models.mcpci import MCPCI
+from models.mcpsi import MCPSI
 from models.mg1 import MG1
 from models.mm1 import MM1
 from models.mm1k import MM1K
@@ -23,8 +23,8 @@ class QueueFactory:
         "MMSK": MMsK,
         "MMSN": MMSN,
         "MG1": MG1,
-        "MCPCI": mcpci,
-        "MCPSI": mcpsi,
+        "MCPCI": MCPCI,
+        "MCPSI": MCPSI,
     }
 
     @classmethod
@@ -55,7 +55,7 @@ class QueueFactory:
         except TypeError as e:
             raise ValueError(
                 f"Parâmetros inválidos para o modelo {model_type}: {str(e)}"
-            )
+            ) from e
 
     @classmethod
     def get_available_models(cls) -> list:
@@ -115,6 +115,12 @@ class QueueFactory:
             "MCPSI": {
                 "name": "Modelo com Prioridades (Sistema Integrado)",
                 "description": "Modelo de prioridades com sistema integrado",
+                "params": ["lamb", "mu", "s", "k", "lamb_list"],
+                "required": ["lamb", "mu", "s", "k", "lamb_list"],
+            },
+            "MCPCIS": {
+                "name": "Modelo com Prioridades (Classes Independentes e Sistema Integrado)",
+                "description": "Modelo de prioridades com classes independentes e sistema integrado",
                 "params": ["lamb", "mu", "s", "k", "lamb_list"],
                 "required": ["lamb", "mu", "s", "k", "lamb_list"],
             },
